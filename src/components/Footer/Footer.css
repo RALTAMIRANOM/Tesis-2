@@ -1,0 +1,8 @@
+.footer-container {
+  background: #2d2d2d;
+  height: 50px;
+}
+
+.footer-container > h6 {
+  color: #fff;
+}

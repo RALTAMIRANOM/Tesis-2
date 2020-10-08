@@ -1,37 +1,37 @@
-import React from 'react';
-import './App.css';
-import Header from './common/components/Header.js';
+import React from "react";
+import "./App.css";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Redirect,
+} from "react-router-dom";
+import PrivateRoute from "./components/PrivateRoute";
+import Home from "./views/Home/Home";
+import Login from "./views/Login";
+import Error from "./views/Error";
+import Register from "./views/Register";
+import Proceso from "./views/Proceso";
+import Footer from "./components/Footer/Footer";
 
-import Grid from '@material-ui/core/Grid';
-
-function App() {
+const App = () => {
   return (
-    <div className="App">
-      <Header>
-        <Grid
-          container
-          direction="column"
-          justify="center"
-          alignItems="center"
-        >hhh</Grid>    
-        <Grid
-          container
-          direction="column"
-          justify="center"
-          alignItems="center"
-        >thf</Grid>   
-        <Grid
-          container
-          direction="column"
-          justify="center"
-          alignItems="center"
-        >fhf</Grid> 
-      </Header>
-
-              
-      
-    </div>
+    <>
+      <div className="app-container">
+        <Router>
+          <Switch>
+            <Route exact path="/" component={Home} />
+            <Route exact path="/login" component={Login} />
+            <Route exact path="/register" component={Register} />
+            <Route exact path="/error" component={Error} />
+            <PrivateRoute path="/proceso" component={Proceso} />
+            <Redirect to="/error" />
+          </Switch>
+        </Router>
+      </div>
+      {/* <Footer /> */}
+    </>
   );
-}
+};
 
 export default App;
