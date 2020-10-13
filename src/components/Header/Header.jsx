@@ -6,7 +6,7 @@ import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
-import Logo from '../assets/img/logo.svg'
+import Logo from '../../assets/logoBl.svg'
 import { withStyles } from "@material-ui/core/styles";
 import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
@@ -33,7 +33,17 @@ class Header extends React.Component{
         this.handleMenu = this.handleMenu.bind(this);
         this.handleClose = this.handleClose.bind(this);
         this.handleChange= this.handleChange.bind(this);
+        this.handleInicio= this.handleInicio.bind(this);
+        this.handleEvaluacion= this.handleEvaluacion.bind(this);
+        this.handleResultado= this.handleResultado.bind(this);
     }
+
+    //const dispatch = useDispatch();
+
+    /*const handleLogout = () => {
+        dispatch(logoutUserAction());
+        props.history.push("/");
+    }*/
 
     handleMenu(event) {
         this.setState(state => ({
@@ -54,15 +64,35 @@ class Header extends React.Component{
         }));
     }
 
+    handleInicio(props) {
+        console.log("res");
+        this.props.history.push("/login");
+    }
+
+
+    handleEvaluacion() {
+        this.setState(state => ({
+          open: false
+        }));
+    }
+
+    handleResultado() {
+        this.setState(state => ({
+          open: false
+        }));
+    }
+
+
+
     render () {
         const actionClasses = this.props.classes;
         return(
             
             <div style={{flexGrow:1}}>
                 
-                <AppBar position="static" style={{ background: '#FFFFFF',height:64 }}>
+                <AppBar position="static" style={{ background: '#FFFFFF'}}>
                 <Toolbar >
-                    <img src={Logo}  style={{height:80, width: 120}} fill='#FFFFFF'/>
+                    <img src={Logo}  style={{height:80, width: 150}} fill='#FFFFFF'/>
                     {<Typography variant="h6" style={{flexGrow:1}}>
                     </Typography>}
                     { (
@@ -79,14 +109,14 @@ class Header extends React.Component{
                         <Menu
                         id="menu-appbar"
                         anchorOrigin={{
-                            vertical: 'bottom',
+                            vertical: 'top',
                             horizontal: 'right',
                         }}
                         keepMounted
                         anchorEl={this.state.anchorEl}
                         getContentAnchorEl={null}
                         transformOrigin={{
-                            vertical: 'top',
+                            vertical: 'bottom',
                             horizontal: 'right',
                         }}
                         open={this.state.open}
@@ -98,7 +128,7 @@ class Header extends React.Component{
                     </div>
                     )}
                 </Toolbar>
-                <Paper square >
+                {/* <Paper square >
                     <Tabs
                         TabIndicatorProps={{style: {background:'#FFFFFF'}}}
                         value={this.state.value}
@@ -110,13 +140,12 @@ class Header extends React.Component{
                         textColor="primary"
                         aria-label="icon tabs example"
                     >
-                        <Tab label="Inicio" classes={actionClasses} />
+                        <Tab label="Inicio" classes={actionClasses} onClick={this.handleInicio} />
                         <Tab label="Evaluación" classes={actionClasses}  />
                         <Tab label="Resultados" classes={actionClasses} />
                     </Tabs>
-                </Paper>
+                </Paper> */}
                 </AppBar>
-
             </div>
         );  
     }

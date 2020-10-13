@@ -1,0 +1,19 @@
+.top-section-E {
+  position: relative;
+}
+
+.top-section-E > img {
+  fill: white !important;
+  width: 20rem;
+  height: auto;
+  position: relative;
+  top: -3rem;
+  left: 1rem;
+}
+
+.top-section-E > .btn-container-E {
+    position: relative;
+    top: 0rem;
+    left: 3rem;
+  }
+  

@@ -1,0 +1,24 @@
+.top-section {
+  background-image: url("../../assets/home.svg");
+  /* background-repeat: no-repeat; */
+  background-size: cover;
+  position: relative;
+  min-width: 100%;
+  height: 90vh;
+  width: 100vw;
+}
+
+.top-section > img {
+  fill: white !important;
+  width: 35rem;
+  height: auto;
+  position: relative;
+  top: 11rem;
+  left: 1rem;
+}
+
+.top-section > .btn-container {
+  position: relative;
+  top: 12rem;
+  left: 10rem;
+}
