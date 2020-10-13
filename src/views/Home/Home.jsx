@@ -9,10 +9,10 @@ import { makeStyles } from "@material-ui/core";
 import Img1 from "../../assets/img1.svg";
 import Img2 from "../../assets/img2.svg";
 import Img3 from "../../assets/img3.svg";
+
 import Img4 from "../../assets/img4.svg";
 import Img5 from "../../assets/img5.svg";
 import Footer from "../../components/Footer/Footer";
-
 
 const useStyles = makeStyles((theme) => ({
   txtContainer: {

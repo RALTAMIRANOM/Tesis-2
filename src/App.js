@@ -8,6 +8,7 @@ import {
 } from "react-router-dom";
 import PrivateRoute from "./components/PrivateRoute";
 import Home from "./views/Home/Home";
+
 import Login from "./views/Login/Login";
 import Error from "./views/Error";
 import Register from "./views/Register";
@@ -25,8 +26,10 @@ const App = () => {
             <Route exact path="/login" component={Login} />
             <Route exact path="/register" component={Register} />
             <Route exact path="/error" component={Error} />
+
             {/* <PrivateRoute path="/proceso" component={Proceso} /> */}
             <Route path="/proceso" component={Proceso} />
+
             <Redirect to="/error" />
           </Switch>
         </Router>
