@@ -28,13 +28,14 @@ const useStyles = makeStyles((theme) => ({
 const Evaluacion  = (props) => {
   const classes = useStyles();
   const actionClasses = props.classes;
-  const [value, setValue] = React.useState(0);
+  const [active, setActive] = React.useState(true);
 
   const handleChange = () => {
-    return <FirstStep/>;
+    setActive(false);
   };
 
-  return (
+
+  return active ? (
     <Grid container direction="column">   
         <Grid container item className={classes.contGenTxt}>
           <Grid container item xs={8}>
@@ -80,6 +81,9 @@ const Evaluacion  = (props) => {
           </Grid>
         </Grid>
     </Grid>
+  ):
+  (
+    <FirstStep/>
   )
 };
 
