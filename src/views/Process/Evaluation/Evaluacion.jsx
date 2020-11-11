@@ -5,7 +5,7 @@ import Typography from "@material-ui/core/Typography";
 import Medidor from "../../../assets/medidor.svg";
 import CustomButton from "../../../components/Button";
 import "./Evaluacion.css";
-import FirstStep from "../Evaluation/FirstStep/FirstStep";
+import PrincipalEvaluacion from "./PrincipalEvaluacion";
 
 const useStyles = makeStyles((theme) => ({
     txtContainer: {
@@ -29,11 +29,11 @@ const Evaluacion  = (props) => {
   const classes = useStyles();
   const actionClasses = props.classes;
   const [active, setActive] = React.useState(true);
+  const [paso, setPaso] = React.useState(0);
 
   const handleChange = () => {
     setActive(false);
   };
-
 
   return active ? (
     <Grid container direction="column">   
@@ -83,7 +83,7 @@ const Evaluacion  = (props) => {
     </Grid>
   ):
   (
-    <FirstStep/>
+    <PrincipalEvaluacion submit={props.submit}/>
   )
 };
 

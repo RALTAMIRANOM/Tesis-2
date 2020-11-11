@@ -20,6 +20,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';
 import {useDispatch} from "react-redux";
 import {loginUserAction} from "../../redux/actions/userActions";
+import * as loginDA from "../../dataAccess/login"
 
 const useStyles = makeStyles((theme) => ({
   txtContainer: {
@@ -84,14 +85,29 @@ const Login = (props) => {
     event.preventDefault();
   };
 
-  const handleProcess = () => {
+  const handleProcess = async () => {
     const {username, password} = values;
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    
     if(re.test(String(username).toLowerCase())){
+      let validate = await loginDA.valitateUser(username,password)
+      console.log (validate)
+      if (validate.idPerson != -1){
+          props.history.push("/proceso");
+          dispatch(loginUserAction({username:username,password:password}));
+      }
+      else alert ("Error de autenticación")
+     /*  if(loginDA.valitateUser(username,password).then(response => {
+          
+      })
+
+        ){
+
+      }
       if(username==="municipalidad@pucp.edu.pe" && password==="municipalidad123"){
         props.history.push("/proceso");
         dispatch(loginUserAction({username:username,password:password}));
-      }else alert("Error de autenticación");
+      }else alert("Error de autenticación"); */
     }else{
       alert("Email invalido");
     }

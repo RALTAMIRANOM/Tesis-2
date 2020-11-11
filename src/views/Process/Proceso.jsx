@@ -30,9 +30,20 @@ const Proceso = (props) => {
   const classes = useStyles();
   const actionClasses = props.classes;
   const [value, setValue] = React.useState(0);
+  const [evaluacion, setEvaluacion] = React.useState(null);
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
+  };
+
+  const guardarEvaluacion = (objetivos, puntuacion, cuestionario) => {
+    let auxEvaluacion = {
+      objetivos: objetivos,
+      puntuacion: puntuacion,
+      cuestionario: cuestionario
+    };
+    setEvaluacion(auxEvaluacion);
+    setValue(2);
   };
 
   return (
@@ -55,8 +66,8 @@ const Proceso = (props) => {
                         <Tab value={2} label="Resultados" classes={actionClasses} />
                     </Tabs>
                     {value===0 && <Inicio/>}
-                    {value===1 && <Evaluacion/>}
-                    {value===2 && <Resultado/>}
+                    {value===1 && <Evaluacion submit={guardarEvaluacion}/>}
+                    {value===2 && <Resultado evaluacion={evaluacion}/>}
         </Paper>
         <Footer />
       </Grid>
