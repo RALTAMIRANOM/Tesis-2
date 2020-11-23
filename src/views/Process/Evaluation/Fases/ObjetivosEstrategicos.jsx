@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
         backgroundColor: theme.palette.background.paper,
         display: 'flex',
-        height: 500,
+        height: '100vh',
     },
     tabs: {
         borderRight: `1px solid ${theme.palette.divider}`,
@@ -239,7 +239,7 @@ const ObjetivosEstrategicos = (props) => {
 				<Grid item xs={12} style={{marginLeft: '-7px'}}>
 					<FormControl className={classes.formControl}>
 						<InputLabel id="demo-simple-select-helper-label">
-                            Desafío para el desarrollo del Gob. Digital
+                            Criterio para el desarrollo del Gob. Digital
                         </InputLabel>
 						<Select
 							labelId="demo-simple-select-helper-label"
@@ -255,7 +255,7 @@ const ObjetivosEstrategicos = (props) => {
                                 );
                             })}
 						</Select>
-						<FormHelperText>Seleccione el desafío correspondiente</FormHelperText>
+						<FormHelperText>Seleccione el criterio correspondiente</FormHelperText>
 					</FormControl>
 				</Grid>
                 <Grid item xs={12} style={{textAlign: "center"}}>
@@ -287,7 +287,7 @@ const ObjetivosEstrategicos = (props) => {
 			<Grid item xs={6}>
                 <Grid item xs={12} style={{marginTop: '10px', marginBottom: '10px'}}>
                     <Typography  style={{marginTop: '10px'}} variant="h3" className={classes.txtContainerTitleLeft} fontWeight="fontWeightBold">
-                        Lista de desafíos para el desarrollo del Gobierno Digital
+                        Lista de criterios 
 					</Typography>
 				</Grid>
                 {desafios.map((desafio, indexDesafio) => {

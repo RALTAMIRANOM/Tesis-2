@@ -83,7 +83,7 @@ const Evaluacion  = (props) => {
     </Grid>
   ):
   (
-    <PrincipalEvaluacion submit={props.submit}/>
+    <PrincipalEvaluacion eval={props.eval} entity={props.entity}/>
   )
 };
 

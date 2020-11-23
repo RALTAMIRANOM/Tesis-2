@@ -9,6 +9,8 @@ import { makeStyles } from "@material-ui/core";
 import Footer from "../../components/Footer/Footer";
 import Header from "../../components/Header/Header";
 import Evaluacion from "./Evaluation/Evaluacion";
+import ListaEvaluaciones from "./Evaluation/ListaEvaluaciones"
+import PrincipalEvaluation from "./Evaluation/PrincipalEvaluacion"
 import Inicio from "./Initial/Inicio";
 import Resultado from "./Result/Resultado";
 import Paper from '@material-ui/core/Paper';
@@ -30,7 +32,8 @@ const Proceso = (props) => {
   const classes = useStyles();
   const actionClasses = props.classes;
   const [value, setValue] = React.useState(0);
-  const [evaluacion, setEvaluacion] = React.useState(null);
+  const [evaluacion, setEvaluacion] = React.useState(0);
+  const [nameEntity, setNameEntity] = React.useState("");
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -45,6 +48,12 @@ const Proceso = (props) => {
     setEvaluacion(auxEvaluacion);
     setValue(2);
   };
+
+  const seleccionarEvaluacion = (idEvalProps, nameEntityProps) => {
+    setEvaluacion(idEvalProps);
+    setNameEntity(nameEntityProps);
+    setValue(3);
+  }
 
   return (
     
@@ -62,12 +71,13 @@ const Proceso = (props) => {
                         aria-label="icon tabs example"
                     >
                         <Tab value={0} label="Inicio" classes={actionClasses}/>
-                        <Tab value={1} label="Evaluación" classes={actionClasses}  />
+                        <Tab value={1} label="Evaluaciones" classes={actionClasses}  />
                         <Tab value={2} label="Resultados" classes={actionClasses} />
                     </Tabs>
                     {value===0 && <Inicio/>}
-                    {value===1 && <Evaluacion submit={guardarEvaluacion}/>}
+                    {value===1 && <ListaEvaluaciones submit={seleccionarEvaluacion} />}
                     {value===2 && <Resultado evaluacion={evaluacion}/>}
+                    {value===3 && <Evaluacion eval={evaluacion} entity={nameEntity}/>}
         </Paper>
         <Footer />
       </Grid>

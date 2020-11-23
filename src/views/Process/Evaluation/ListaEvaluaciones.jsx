@@ -145,16 +145,25 @@ const ListaEvaluaciones = (props) => {
 	const actionClasses = props.classes;
     const [evaluaciones, setEvaluaciones] = React.useState(evals);
 
-    const handleEvaluacionSeleccionada = (event, idEval) => {
+    const handleEvaluacionSeleccionada = (idEval, nameEntity) => {
         //props.submit(idEval);
-        props.submit(1);
+        props.submit(idEval, nameEntity);
     };
+
+    useEffect(() => {
+        async function setEvaluationsList(){
+            console.log("entroooo")
+            const auxEvaluations = await APIEvaluation.consultEvaluations();
+            setEvaluaciones(auxEvaluations);
+        }
+        setEvaluationsList();
+    },[]);
 
     return (
         <div className={classes.root}>
             <Grid item xs={12}>
                 <Typography  style={{marginTop: '10px', marginBottom: '10px'}} variant="h3" className={classes.txtContainerTitleCenter} fontWeight="fontWeightBold">
-                    Evaluciones 
+                    Evaluaciones 
 				</Typography>
                 <Accordion>
                     <AccordionSummary
@@ -175,7 +184,7 @@ const ListaEvaluaciones = (props) => {
                                 {evaluaciones.nuevas.map((evaluacion) => {
                                     return <ListItem
                                                 button
-                                                onClick={(event) => handleEvaluacionSeleccionada(event, eval.id)}>
+                                                onClick={(event) => handleEvaluacionSeleccionada(evaluacion.id, evaluacion.nameEntity)}>
                                         <ListItemText primary={evaluacion.nameEntity}/>
                                         <ListItemText primary={evaluacion.addressEntity}/>
                                     </ListItem>
@@ -203,7 +212,7 @@ const ListaEvaluaciones = (props) => {
                                 {evaluaciones.proceso.map((evaluacion) => {
                                     return <ListItem
                                                 button
-                                                onClick={(event) => handleEvaluacionSeleccionada(event, eval.id)}>
+                                                onClick={(event) => handleEvaluacionSeleccionada(evaluacion.id, evaluacion.nameEntity)}>
                                         <ListItemText primary={evaluacion.nameEntity}/>
                                         <ListItemText primary={evaluacion.addressEntity}/>
                                     </ListItem>
@@ -231,7 +240,7 @@ const ListaEvaluaciones = (props) => {
                                 {evaluaciones.terminadas.map((evaluacion) => {
                                     return <ListItem
                                                 button
-                                                onClick={(event) => handleEvaluacionSeleccionada(event, eval.id)}>
+                                                onClick={(event) => handleEvaluacionSeleccionada(evaluacion.id, evaluacion.nameEntity)}>
                                         <ListItemText primary={evaluacion.nameEntity}/>
                                         <ListItemText primary={evaluacion.addressEntity}/>
                                     </ListItem>

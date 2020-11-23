@@ -4,6 +4,7 @@ import { makeStyles } from "@material-ui/core";
 import Evaluacion from "../../Evaluation/Evaluacion";
 import Inicio from "../../Initial/Inicio";
 import Resultado from "../../Result/Resultado";
+import ListaEvaluaciones from "../../Evaluation/ListaEvaluaciones"
 import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -81,14 +82,14 @@ const FirstStep = (props) => {
                         className={classes.Tabs}
                     >
                         <Tab label="Inicio" {...a11yProps(0)} />
-                        <Tab label="Evaluación" {...a11yProps(1)} />
+                        <Tab label="Evaluaciones" {...a11yProps(1)} />
                         <Tab label="Resultados" {...a11yProps(2)} />
                     </Tabs>
                     <TabPanel value={value} index={0}>
                       <Inicio/>
                     </TabPanel>
                     <TabPanel value={value} index={1}>
-                      <Evaluacion/>
+                      <ListaEvaluaciones/>
                     </TabPanel>
                     <TabPanel value={value} index={2}>
                       <Resultado/>

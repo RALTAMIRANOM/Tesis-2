@@ -13,6 +13,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import TrackChangesIcon from '@material-ui/icons/TrackChanges';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import TableChartIcon from '@material-ui/icons/TableChart';
+import GradeIcon from '@material-ui/icons/Grade';
 
 import Button from '@material-ui/core/Button';
 import Dialog from '@material-ui/core/Dialog';
@@ -26,6 +27,7 @@ import ListaEvaluaciones from "./ListaEvaluaciones.jsx";
 import ObjetivosEstrategicos from './Fases/ObjetivosEstrategicos.jsx';
 import Puntuacion from './Fases/Puntuacion.jsx';
 import Cuestionario from './Fases/Cuestionario.jsx';
+import Resultado from '../Result/Resultado'
 import { FreeBreakfastOutlined } from "@material-ui/icons";
 
 import * as APIEvaluation from '../../../dataAccess/evaluation';
@@ -93,6 +95,12 @@ const useStyles = makeStyles((theme) => ({
     },
     expandOpen: {
       transform: 'rotate(180deg)',
+    },
+    txtContainerTitleLeft: {
+        color: "#287198",
+        textAlign:"left",
+        fontSize: 30,
+        marginTop: "10px"
     }
 }));
 
@@ -105,7 +113,7 @@ const flexContainer = {
 const PrincipalEvaluacion = (props) => {
 	const classes = useStyles();
 	const actionClasses = props.classes;
-    const [fase, setFase] = React.useState(0);
+    const [fase, setFase] = React.useState(1);
     const [idEvaluacion, setIdEvaluacion] = React.useState(0);
     const [objetivos, setObjetivos] = React.useState([]);
     const [puntuacion, setPuntuacion] = React.useState([]);
@@ -122,14 +130,20 @@ const PrincipalEvaluacion = (props) => {
                 setFase(1);
                 break;
             case 2:
-                if(objetivos != [])
+                if(objetivos.length != 0)
                     setFase(2);
                 else
                     handleChangeDialogo();
                 break;
-            default:
-                if(objetivos != [] && puntuacion != [])
+            case 3:
+                if(objetivos.length != 0 && puntuacion.length != 0)
                    setFase(3);
+                else
+                    handleChangeDialogo();
+                break;
+            default:
+                if(objetivos.length != 0 && puntuacion.length != 0 && cuestionario.length != 0)
+                   setFase(4);
                 else
                     handleChangeDialogo();
                 break;
@@ -137,10 +151,6 @@ const PrincipalEvaluacion = (props) => {
         
     };
 
-    const seleccionarEvaluacion = (evaluacion) => {
-        setIdEvaluacion(evaluacion);
-        setFase(1);
-    }
 
 	const guardarObjetivo = (nuevObjetivos) => {
         /* Registrar evaluaciones */
@@ -152,8 +162,9 @@ const PrincipalEvaluacion = (props) => {
             });
 
             const resultRegister = await APIEvaluation.registerObjectives(auxObjectives);
+            console.log(resultRegister)
         }
-
+        
         setObjetivos(nuevObjetivos);
         registrarObjetivos();
         setFase(2);
@@ -199,10 +210,21 @@ const PrincipalEvaluacion = (props) => {
                         button
                         selected={fase === 3}
                         onClick={(event) => handleListItemClick(event, 3)}>
-                        <ListItemIcon>
+                        <ListItemIcon style={{color: (objetivos.length > 0 && puntuacion.length > 0 && cuestionario.length != 0 ? 
+                                'limegreen' : 'black')}}>
                             <AssignmentIcon />
                         </ListItemIcon>
-                        <ListItemText primary="Cuestionarios" />
+                        <ListItemText style={{color: (objetivos.length > 0 && puntuacion.length > 0 && cuestionario.length != 0 ? 
+                            'limegreen' : 'black')}} primary="Cuestionarios" />
+                    </ListItem>
+                    <ListItem
+                        button
+                        selected={fase === 4}
+                        onClick={(event) => handleListItemClick(event, 4)}>
+                        <ListItemIcon>
+                            <GradeIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Resultados" />
                     </ListItem>
                 </List>
 				</Grid>
@@ -214,12 +236,13 @@ const PrincipalEvaluacion = (props) => {
                     aria-labelledby="alert-dialog-slide-title"
                     aria-describedby="alert-dialog-slide-description"
                 >
-                    <DialogTitle id="alert-dialog-slide-title">{"Error"}</DialogTitle>
+                    <DialogTitle id="alert-dialog-slide-title">{"Advertencia"}</DialogTitle>
                     <DialogContent>
                     <DialogContentText id="alert-dialog-slide-description">
                         No puede avanzar a la siguiente fase sin completar
-                        {(objetivos == null ? " los objetivos estratégicos." : 
-                            " la tabla de puntuaciones.")}
+                        {(objetivos.length == 0 ? " los objetivos estratégicos." : 
+                            puntuacion.length == 0 ? " la tabla de puntuaciones." :
+                            " el cuestionario.")}
                     </DialogContentText>
                     </DialogContent>
                     <DialogActions>
@@ -229,10 +252,13 @@ const PrincipalEvaluacion = (props) => {
                     </DialogActions>
                 </Dialog>
 				<Grid item xs={10}>
-                    {fase == 0 && <ListaEvaluaciones submit={seleccionarEvaluacion}/>}
-					{fase == 1 && <ObjetivosEstrategicos eval={idEvaluacion} objetivos={objetivos} submit={guardarObjetivo}/>}
+                    <Typography  style={{marginTop: '10px'}} variant="h3" className={classes.txtContainerTitleLeft} fontWeight="fontWeightBold">
+                        Entidad: {props.entity} 
+					</Typography>
+					{fase == 1 && <ObjetivosEstrategicos eval={props.eval} objetivos={objetivos} submit={guardarObjetivo}/>}
                     {fase == 2 && <Puntuacion eval={idEvaluacion} submit={guardarPuntuacion}/>}
                     {fase == 3 && <Cuestionario eval={idEvaluacion} submit={terminarObjetivo}/>}
+                    {fase == 4 && <Resultado eval={idEvaluacion} />}
 				</Grid>
 			</Grid>
 		</div>

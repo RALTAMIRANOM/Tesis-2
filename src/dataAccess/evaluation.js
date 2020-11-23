@@ -43,12 +43,46 @@ export async function consultResult(){
 }
 
 /* Registro */
-export async function registerObjectives(){
+export async function registerObjectives(objectivesList){
     let responseData = {};
     let body = {
-        idEvaluation: 1
+        objectives: objectivesList,
+
     };
     await API.post("/registerObjectives", body)
+        .then(res => {
+            responseData=res.data.result;
+        })
+        .catch(err => console.log(err));
+    console.log(responseData);
+    return responseData;
+}
+
+/* Consulta de evaluaciones */
+export async function consultEvaluations(){
+    let responseData = {};
+    let body = {
+        idUser: 1
+    };
+    console.log("entro api")
+    await API.post("/consultEvaluation", body)
+        .then(res => {
+            responseData=res.data.evals;
+        })
+        .catch(err => console.log(err));
+    console.log(responseData);
+    return responseData;
+}
+
+
+/* Consulta de objetivos */
+export async function consultObjectives(evaluation){
+    let responseData = {};
+    let body = {
+        idEvaluation: evaluation
+    };
+    console.log("entro api")
+    await API.post("/consultObjectives", body)
         .then(res => {
             responseData=res.data.result;
         })
