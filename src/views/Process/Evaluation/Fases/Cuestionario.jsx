@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core";
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
@@ -17,6 +17,7 @@ import AccordionDetails from '@material-ui/core/AccordionDetails';
 
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 
 import Table from '@material-ui/core/Table';
@@ -30,6 +31,20 @@ import TrackChangesIcon from '@material-ui/icons/TrackChanges';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import TableChartIcon from '@material-ui/icons/TableChart';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import CheckCircleOutlineIcon from '@material-ui/icons/CheckCircleOutline';
+
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Slide from '@material-ui/core/Slide';
+
+import * as APIEvaluation from '../../../../dataAccess/evaluation';
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -107,6 +122,12 @@ const useStyles = makeStyles((theme) => ({
         color: "#287198",
         textAlign:"center",
         fontSize: 15
+    },
+    txtContainerTitleLeft: {
+        color: "#287198",
+        textAlign:"left",
+        fontSize: 20,
+        marginTop: "10px"
     },
 }));
 
@@ -225,7 +246,7 @@ const Cuestionario = (props) => {
 	const actionClasses = props.classes;
     const [value, setValue] = React.useState('');
     const [fase, setFase] = React.useState(1);
-    const [categorias, setCategorias] = React.useState(listaCategoria);
+    const [categorias, setCategorias] = React.useState([]);
     const [subcategSelected, setSubcategSelected] = React.useState([-1, -1, -1, -1, -1]);
     const [tablaPreguntas, setTablaPreguntas] = React.useState([]);
     const [colors, setColors] = React.useState([
@@ -234,14 +255,16 @@ const Cuestionario = (props) => {
         {back: "#008000", text: "#FFFFFF"},
         {back: "#FFFF00", text: "#000000"},
         {back: "#F88017", text: "#FFFFFF"}]);
+    const [valorDialogo, setValorDialogo] = React.useState(false);
+
+    useEffect(() => {
+        async function setListaPreguntas(){
+            const auxCategorias = (await APIEvaluation.consultQuestionary());
+            setCategorias(auxCategorias);
+        }
     
-    /*useEffect(() => {
-        let auxSelected = [];
-        listaCategoria.forEach(() => {
-            auxSelected.push(-1);
-        });
-        setSubcategSelected(auxSelected);
-    });*/
+        setListaPreguntas();
+    }, []);
 
     const handleSubcategClick = (event, indexCateg, indexSubcateg) => {
         let newSubcategSelected = [...subcategSelected];
@@ -277,16 +300,24 @@ const Cuestionario = (props) => {
         cancelarSeleccion(indexCateg);
     }
 
+    const handleDialogo = () => {
+        setValorDialogo(!valorDialogo);
+    };
+
     const terminarEvaluacion = () => {
-        props.submit(categorias);
+        if(categorias.filter(x => x.subcategorias.filter(y => y.preguntas
+                .filter(z => z.respuesta != -1).length != 0).length != 0).length != 0)
+            props.submit(categorias);
+        else
+            handleDialogo();
     };
 
 	return (
         <div className={classes.root}>
             <Grid item xs={12}>
-                <Typography variant="h3" className={classes.txtContainerTitleCenter} fontWeight="fontWeightBold">
+                <Typography  style={{marginTop: '10px', marginBottom: '10px'}} variant="h3" className={classes.txtContainerTitleLeft} fontWeight="fontWeightBold">
                     Cuestionarios
-                </Typography>
+				</Typography>
                 {categorias.map((desafio, indexCateg) => {
                     return(
                         <Accordion>
@@ -310,6 +341,10 @@ const Cuestionario = (props) => {
                                                 button
                                                 onClick={(event) => handleSubcategClick(event, indexCateg, key)}>
                                             <ListItemText primary={subcateg.nombre}/>
+                                            <ListItemIcon style={{color: (subcateg.preguntas.length == subcateg.preguntas.filter(y => y.respuesta != -1).length ? 
+                                                    'limegreen' : 'black')}}>
+                                                <CheckCircleOutlineIcon />
+                                            </ListItemIcon>
                                             </ListItem>
                                         })}
                                     </List>
@@ -383,6 +418,26 @@ const Cuestionario = (props) => {
                     </Button>
                 </Typography>
             </Grid>
+            <Dialog
+                open={valorDialogo}
+                TransitionComponent={Transition}
+                keepMounted
+                onClose={handleDialogo}
+                aria-labelledby="alert-dialog-slide-title"
+                aria-describedby="alert-dialog-slide-description"
+            >
+                <DialogTitle id="alert-dialog-slide-title">{"Error"}</DialogTitle>
+                <DialogContent>
+                <DialogContentText id="alert-dialog-slide-description">
+                    Debe responder todas las preguntas para continuar
+                </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                <Button onClick={handleDialogo} color="primary">
+                    Acepto
+                </Button>
+                </DialogActions>
+            </Dialog>
         </div>
     );
 }

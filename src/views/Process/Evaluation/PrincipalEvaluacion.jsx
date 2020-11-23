@@ -1,12 +1,6 @@
 import React from "react";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core";
-import Evaluacion from "./Evaluacion";
-import Inicio from "../Initial/Inicio";
-import Resultado from "../Result/Resultado";
-import Paper from '@material-ui/core/Paper';
-import Tabs from '@material-ui/core/Tabs';
-import Tab from '@material-ui/core/Tab';
 import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import PropTypes from 'prop-types';
@@ -19,16 +13,26 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import TrackChangesIcon from '@material-ui/icons/TrackChanges';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import TableChartIcon from '@material-ui/icons/TableChart';
-import InboxIcon from '@material-ui/icons/Inbox';
-import Avatar from '@material-ui/core/Avatar';
-import ImageIcon from '@material-ui/icons/Image';
-import WorkIcon from '@material-ui/icons/Work';
-import BeachAccessIcon from '@material-ui/icons/BeachAccess';
 
+import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Slide from '@material-ui/core/Slide';
 
+import ListaEvaluaciones from "./ListaEvaluaciones.jsx";
 import ObjetivosEstrategicos from './Fases/ObjetivosEstrategicos.jsx';
 import Puntuacion from './Fases/Puntuacion.jsx';
 import Cuestionario from './Fases/Cuestionario.jsx';
+import { FreeBreakfastOutlined } from "@material-ui/icons";
+
+import * as APIEvaluation from '../../../dataAccess/evaluation';
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -101,18 +105,57 @@ const flexContainer = {
 const PrincipalEvaluacion = (props) => {
 	const classes = useStyles();
 	const actionClasses = props.classes;
-	const [fase, setFase] = React.useState(1);
-    const [objetivo, setObjetivo] = React.useState(null);
-    const [puntuacion, setPuntuacion] = React.useState(null);
-    const [cuestionario, setCuestionario] = React.useState(null);
+    const [fase, setFase] = React.useState(0);
+    const [idEvaluacion, setIdEvaluacion] = React.useState(0);
+    const [objetivos, setObjetivos] = React.useState([]);
+    const [puntuacion, setPuntuacion] = React.useState([]);
+    const [cuestionario, setCuestionario] = React.useState([]);
+    const [valorDialogo, setValorDialogo] = React.useState(false);
 
-    const handleListItemClick = (event, index) => {
-        setFase(index);
-        console.log("Fase ", index);
+    const handleChangeDialogo = () => {
+        setValorDialogo(!valorDialogo);
     };
 
-	const guardarObjetivo = (nuevObjetivo) => {
-        setObjetivo(nuevObjetivo);
+    const handleListItemClick = (event, index) => {
+        switch(index){
+            case 1:
+                setFase(1);
+                break;
+            case 2:
+                if(objetivos != [])
+                    setFase(2);
+                else
+                    handleChangeDialogo();
+                break;
+            default:
+                if(objetivos != [] && puntuacion != [])
+                   setFase(3);
+                else
+                    handleChangeDialogo();
+                break;
+        }
+        
+    };
+
+    const seleccionarEvaluacion = (evaluacion) => {
+        setIdEvaluacion(evaluacion);
+        setFase(1);
+    }
+
+	const guardarObjetivo = (nuevObjetivos) => {
+        /* Registrar evaluaciones */
+        async function registrarObjetivos(){
+            /* Formatear cada evaluación */
+            let auxObjectives = [];
+            nuevObjetivos.forEach((objetivo) => {
+                auxObjectives.push({idCriterion: objetivo.idCriterion, idEvaluacion: idEvaluacion, description: objetivo.description});
+            });
+
+            const resultRegister = await APIEvaluation.registerObjectives(auxObjectives);
+        }
+
+        setObjetivos(nuevObjetivos);
+        registrarObjetivos();
         setFase(2);
     }
 
@@ -123,7 +166,7 @@ const PrincipalEvaluacion = (props) => {
 
     const terminarObjetivo = (auxCuestionario) => {
         setCuestionario(auxCuestionario);
-        props.submit(objetivo, puntuacion, auxCuestionario);
+        props.submit(objetivos, puntuacion, auxCuestionario);
     }
     
 	return (
@@ -135,35 +178,61 @@ const PrincipalEvaluacion = (props) => {
                         button
                         selected={fase === 1}
                         onClick={(event) => handleListItemClick(event, 1)}>
-                    <ListItemIcon>
-                        <TrackChangesIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Objetivos estratégicos" />
+                        <ListItemIcon style={{color: (objetivos.length > 0 ? 'limegreen' : 'black')}}>
+                            <TrackChangesIcon />
+                        </ListItemIcon>
+                        <ListItemText style={{color: (objetivos.length > 0 ? 'limegreen' : 'black')}}
+                            primary="Objetivos estratégicos" />
                     </ListItem>
                     <ListItem
                         button
                         selected={fase === 2}
                         onClick={(event) => handleListItemClick(event, 2)}>
-                    <ListItemIcon>
-                        <TableChartIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Puntuación" />
+                        <ListItemIcon style={{color: (objetivos.length > 0 && puntuacion.length > 0 ? 
+                                'limegreen' : 'black')}}>
+                            <TableChartIcon />
+                        </ListItemIcon>
+                        <ListItemText style={{color: (objetivos.length > 0 && puntuacion.length > 0 ? 
+                            'limegreen' : 'black')}} primary="Puntuación" />
                     </ListItem>
                     <ListItem
                         button
                         selected={fase === 3}
                         onClick={(event) => handleListItemClick(event, 3)}>
-                    <ListItemIcon>
-                        <AssignmentIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Cuestionarios" />
+                        <ListItemIcon>
+                            <AssignmentIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Cuestionarios" />
                     </ListItem>
                 </List>
 				</Grid>
+                <Dialog
+                    open={valorDialogo}
+                    TransitionComponent={Transition}
+                    keepMounted
+                    onClose={handleChangeDialogo}
+                    aria-labelledby="alert-dialog-slide-title"
+                    aria-describedby="alert-dialog-slide-description"
+                >
+                    <DialogTitle id="alert-dialog-slide-title">{"Error"}</DialogTitle>
+                    <DialogContent>
+                    <DialogContentText id="alert-dialog-slide-description">
+                        No puede avanzar a la siguiente fase sin completar
+                        {(objetivos == null ? " los objetivos estratégicos." : 
+                            " la tabla de puntuaciones.")}
+                    </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                    <Button onClick={handleChangeDialogo} color="primary">
+                        Acepto
+                    </Button>
+                    </DialogActions>
+                </Dialog>
 				<Grid item xs={10}>
-					{fase == 1 && <ObjetivosEstrategicos submit={guardarObjetivo}/>}
-                    {fase == 2 && <Puntuacion submit={guardarPuntuacion}/>}
-                    {fase == 3 && <Cuestionario submit={terminarObjetivo}/>}
+                    {fase == 0 && <ListaEvaluaciones submit={seleccionarEvaluacion}/>}
+					{fase == 1 && <ObjetivosEstrategicos eval={idEvaluacion} objetivos={objetivos} submit={guardarObjetivo}/>}
+                    {fase == 2 && <Puntuacion eval={idEvaluacion} submit={guardarPuntuacion}/>}
+                    {fase == 3 && <Cuestionario eval={idEvaluacion} submit={terminarObjetivo}/>}
 				</Grid>
 			</Grid>
 		</div>

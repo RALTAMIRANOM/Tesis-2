@@ -100,9 +100,7 @@ const Login = (props) => {
      /*  if(loginDA.valitateUser(username,password).then(response => {
           
       })
-
         ){
-
       }
       if(username==="municipalidad@pucp.edu.pe" && password==="municipalidad123"){
         props.history.push("/proceso");

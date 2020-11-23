@@ -51,6 +51,12 @@ const useStyles = makeStyles((theme) => ({
         textAlign:"center",
         fontSize: 30
     },
+    txtContainerTitleLeft: {
+        color: "#287198",
+        textAlign:"left",
+        fontSize: 20,
+        marginTop: "10px"
+    },
 }));
 
 const Puntuacion = (props) => {
@@ -82,9 +88,9 @@ const Puntuacion = (props) => {
     return(
         <div className={classes.root}>
             <Grid item xs={12}>
-                <Typography variant="h3" className={classes.txtContainerTitleCenter} fontWeight="fontWeightBold">
+                <Typography  style={{marginTop: '10px', marginBottom: '10px'}} variant="h3" className={classes.txtContainerTitleLeft} fontWeight="fontWeightBold">
                     Puntuación
-                </Typography>
+				</Typography>
                 <Table className={classes.table} aria-label="simple table">
                     <TableHead>
                     	<TableRow>

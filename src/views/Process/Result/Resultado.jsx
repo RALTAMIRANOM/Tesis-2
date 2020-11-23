@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core";
 import Modal from '@material-ui/core/Modal';
@@ -18,6 +18,8 @@ import IconButton from '@material-ui/core/IconButton';
 
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
+
+import * as APIEvaluation from '../../../dataAccess/evaluation';
 
 const useStyles = makeStyles((theme) => ({
    txtContainer: {
@@ -64,7 +66,7 @@ const useStyles = makeStyles((theme) => ({
   }
 
 const Resultado = (props) => {
-	let tablaCumplimiento = [
+	/*let tablaCumplimiento = [
 		{objetivo: "Objetivo 1", dpg: "DGP5", descripcion: "Gestión del Cambio", 
 		nDeseado: 999, nAlcanzado: 999, porcDeseado: "100%", porcAlcanzado: "100%",
 		nDeseadoOrig: 123, nAlcanzadoOrig: 456, porcDeseadoOrig: "78%", porcAlcanzadoOrig: "90%"},
@@ -76,12 +78,21 @@ const Resultado = (props) => {
 		descripcion: "Asegurar que la experiencia del ciudadano con los servicios digitales sea plena y satisfactoria", 
 		nDeseado: 999, nAlcanzado: 999, porcDeseado: "100%", porcAlcanzado: "100%",
 		nDeseadoOrig: 123, nAlcanzadoOrig: 456, porcDeseadoOrig: "78%", porcAlcanzadoOrig: "90%"}
-	];
+	];*/
 	const classes = useStyles();
 	const [modalStyle] = React.useState(getModalStyle);
 	const [open, setOpen] = React.useState(false);
 	const [checkedOrig, setCheckedOrig] = React.useState(false);
-	const [cumplimientos, setCumplimientos] = React.useState(tablaCumplimiento);
+	const [cumplimientos, setCumplimientos] = React.useState([]);
+
+	useEffect(() => {
+        async function setListaCumplimientos(){
+            const auxResultado = await APIEvaluation.consultResult();
+            setCumplimientos(auxResultado);
+        }
+
+        setListaCumplimientos();
+    }, []);
 
 	const handleModalOpen = () => {
 		setOpen(true);
@@ -135,7 +146,7 @@ const Resultado = (props) => {
 							<TableRow key={cump.objetivo}>
 								<TableCell width="15%" align="center">{cump.objetivo}</TableCell>
 								<TableCell width="10%" align="center">{cump.dpg}</TableCell>
-								<TableCell width="35%" align="center">{cump.descripcion}</TableCell>
+								<TableCell width="35%" align="left">{cump.descripcion}</TableCell>
 								<TableCell width="10%" align="center">{(checkedOrig ? cump.nDeseadoOrig : cump.nDeseado)}</TableCell>
 								<TableCell width="10%" align="center">{(checkedOrig ? cump.nAlcanzadoOrig : cump.nAlcanzado)}</TableCell>
 								<TableCell width="10%" align="center">{(checkedOrig ? cump.porcDeseadoOrig : cump.porcDeseado)}</TableCell>

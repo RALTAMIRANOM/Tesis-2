@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core";
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles'
@@ -22,6 +22,19 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+import Slide from '@material-ui/core/Slide';
+
+import * as APIEvaluation from '../../../../dataAccess/evaluation';
+
+const Transition = React.forwardRef(function Transition(props, ref) {
+    return <Slide direction="up" ref={ref} {...props} />;
+});
 
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
@@ -98,7 +111,7 @@ const useStyles = makeStyles((theme) => ({
 const greenTheme = createMuiTheme({ palette: { primary: green } })
 
 const ObjetivosEstrategicos = (props) => {
-    let listaDesafios = [
+    /*let listaDesafios = [
         {
             codigo: "DPG1",
             nombre: "Gestión del Cambio",
@@ -134,13 +147,14 @@ const ObjetivosEstrategicos = (props) => {
             nombre: "Asegurar la infraestructura ...",
             descripcion: "Lorem ipsum 7 para Asegurar la infraestructura ...",
         }
-    ];
+    ];*/
     const classes = useStyles();
 	const actionClasses = props.classes;
     const [value, setValue] = React.useState(0);
     const [descripcion, setDescripcion] = React.useState("");
     const [desafio, setDesafio] = React.useState(null);
-    const [desafios, setDesafios] = React.useState(listaDesafios);
+    //const [desafios, setDesafios] = React.useState(listaDesafios);
+    const [desafios, setDesafios] = React.useState([]);
     const [objetivosAEnviar, setObjetivosAEnviar] = React.useState([]);
     const [colors, setColors] = React.useState([
         {back: "#FF0000", text: "#FFFFFF"},
@@ -152,35 +166,65 @@ const ObjetivosEstrategicos = (props) => {
         {back: "#8A4117", text: "#FFFFFF"},
         {back: "#7D0552", text: "#FFFFFF"}
     ]);
+    const [valorDialogo, setValorDialogo] = React.useState(false);
+    const [textoDialogo, setTextoDialogo] = React.useState(0);
+
+    useEffect(() => {
+        async function setListaDesafios(){
+            const auxDesafios = await APIEvaluation.getCriterion();
+            props.objetivos.forEach((objetivo) => {
+                auxDesafios.splice(auxDesafios.findIndex((obj => obj.code === objetivo.desafio)), 1);
+            });
+            setDesafios(auxDesafios);
+        }
+
+        setObjetivosAEnviar(props.objetivos);
+        setListaDesafios();
+    }, [props.objetivos]);
+
+    const handleChangeDialogo = (texto) => {
+        setValorDialogo(!valorDialogo);
+        setTextoDialogo(texto);
+    };
 
 	const handleDesafio = (event) => {
         setDesafio(event.target.value);
 	}
     
     const anadirObjetivo = () => {
-        let nuevObjetivo = {
-            desafio: desafio,
-            descripcion: descripcion
-        };
-        let auxObjetivos = objetivosAEnviar;
-        auxObjetivos.push(nuevObjetivo);
-        setObjetivosAEnviar(auxObjetivos);
-        // Elminar el objetivo ya seleccionado
-        setDesafio(null);
-        setDescripcion("");
-        let auxDesafios = desafios;
-        auxDesafios.splice(auxDesafios.findIndex((obj => obj.codigo === nuevObjetivo.desafio)), 1);
-        setDesafios(auxDesafios);
+        console.log(desafio, descripcion);
+        console.log(desafio != null && descripcion != "");
+        if(desafio != null && descripcion != ""){
+            let nuevObjetivo = {
+                desafio: desafio,
+                descripcion: descripcion
+            };
+            let auxObjetivos = objetivosAEnviar;
+            auxObjetivos.push(nuevObjetivo);
+            setObjetivosAEnviar(auxObjetivos);
+            // Elminar el objetivo ya seleccionado
+            setDesafio(null);
+            setDescripcion("");
+            let auxDesafios = desafios;
+            auxDesafios.splice(auxDesafios.findIndex((obj => obj.code === nuevObjetivo.desafio)), 1);
+            setDesafios(auxDesafios);
+        }else{
+            handleChangeDialogo(1);
+        }
     }
 
     const enviarObjetivos = () => {
-        props.submit(objetivosAEnviar);
+        console.log(objetivosAEnviar, objetivosAEnviar.length);
+        if(objetivosAEnviar.length > 0)
+            props.submit(objetivosAEnviar);
+        else
+            handleChangeDialogo(2);
     };
 
 	return (
         <div className={classes.root}>
             <Grid item xs={6}>
-				<Grid item xs={12} style={{marginTop: '10px'}}>
+				<Grid item xs={12} style={{marginTop: '10px', marginBottom: '10px'}}>
                     <Typography  style={{marginTop: '10px'}} variant="h3" className={classes.txtContainerTitleLeft} fontWeight="fontWeightBold">
                         Objetivos Estrátegicos
 					</Typography>
@@ -205,8 +249,8 @@ const ObjetivosEstrategicos = (props) => {
 						>
                             {desafios.map((desafio) => {
                                 return(
-                                    <MenuItem value={desafio.codigo}>
-                                        {desafio.codigo}: {desafio.nombre}
+                                    <MenuItem value={desafio.code}>
+                                        {desafio.code}: {desafio.name}
                                     </MenuItem>
                                 );
                             })}
@@ -256,18 +300,39 @@ const ObjetivosEstrategicos = (props) => {
                         >
                             <Typography className={classes.heading}>
                                 <strong>
-                                    {desafio.codigo}: {desafio.nombre}
+                                    {desafio.code}: {desafio.name}
                                 </strong>
                             </Typography>
                         </AccordionSummary>
                         <AccordionDetails>
                             <Typography>
-                            {desafio.descripcion}
+                            {desafio.description}
                             </Typography>
                         </AccordionDetails>
                         </Accordion>;
                 })}
 			</Grid>
+            <Dialog
+                    open={valorDialogo}
+                    TransitionComponent={Transition}
+                    keepMounted
+                    onClose={handleChangeDialogo}
+                    aria-labelledby="alert-dialog-slide-title"
+                    aria-describedby="alert-dialog-slide-description"
+            >
+                    <DialogTitle id="alert-dialog-slide-title">{"Error"}</DialogTitle>
+                    <DialogContent>
+                    <DialogContentText id="alert-dialog-slide-description">
+                        {(textoDialogo == 1 ? "Debe registrar un desafío y una descripción para registrar su objetivo estratégico" :
+                            "Debe añadir al menos un objetivo estratégico.")}
+                    </DialogContentText>
+                    </DialogContent>
+                    <DialogActions>
+                    <Button onClick={handleChangeDialogo} color="primary">
+                        Acepto
+                    </Button>
+                    </DialogActions>
+            </Dialog>
         </div>
     );
 }
