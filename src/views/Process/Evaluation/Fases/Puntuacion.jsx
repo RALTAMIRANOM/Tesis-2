@@ -4,6 +4,7 @@ import { makeStyles } from "@material-ui/core";
 
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
+import MenuItem from '@material-ui/core/MenuItem';
 import Button from '@material-ui/core/Button';
 import Edit from '@material-ui/icons/Edit';
 import CheckIcon from '@material-ui/icons/Check';
@@ -59,12 +60,26 @@ const useStyles = makeStyles((theme) => ({
     txtContainerTitleLeft: {
         color: "#287198",
         textAlign:"left",
-        fontSize: 20,
+        fontSize: 22,
+        marginTop: "10px"
+    },
+    txtContainerNoteLeft: {
+        color: "#828282",
+        textAlign:"left",
+        fontSize: 15,
         marginTop: "10px"
     },
 }));
 
 const Puntuacion = (props) => {
+    let weights=[
+        {value:0, label:0},
+        {value:1, label:1},
+        {value:2, label:2},
+        {value:3, label:3},
+        {value:4, label:4}
+    ]
+
     let tablaPuntuacion = [
         {
             clase: "FCE1",
@@ -117,7 +132,10 @@ const Puntuacion = (props) => {
         init();
       }, []);
 
-    const guardarPuntuacion = () => {
+    const guardarPuntuacion = async () => {
+        console.log(listaPuntaje)
+        const res = await APIEvaluation.registerModifiedWeights(listaPuntaje)
+        console.log(res)
         props.submit(listaPuntaje);
     };
 
@@ -129,7 +147,7 @@ const Puntuacion = (props) => {
 
     const handleChangeWeights = (indexGen,indexIn,e) => {
         let auxFilter = [...listaPuntaje];
-        auxFilter[indexGen].weights[indexIn] = e.target.value;
+        auxFilter[indexGen].weights[indexIn] = parseInt(e.target.value);
         setListaPuntaje(auxFilter);
     }
 
@@ -138,6 +156,9 @@ const Puntuacion = (props) => {
             <Grid item xs={12}>
                 <Typography  style={{marginTop: '10px', marginBottom: '10px'}} variant="h3" className={classes.txtContainerTitleLeft} fontWeight="fontWeightBold">
                     Puntuación
+				</Typography>
+                <Typography  style={{marginTop: '10px', marginBottom: '10px'}} variant="h4" className={classes.txtContainerNoteLeft} fontWeight="fontWeightBold">
+                    Nota: Los pesos deben estar en el rango de 0 a 4
 				</Typography>
                 <Table className={classes.table} aria-label="simple table" style={{height:"20vh", maxHeight:"20vh", overflowY:"scroll"}}>
                     <TableHead>
@@ -156,8 +177,13 @@ const Puntuacion = (props) => {
                                 <TableCell width="10%" align="center">{fila.keyComponent}</TableCell>
                                 <TableCell width="40%" align="left">{fila.criticalVariableName}</TableCell>
                                 {fila.weights.map((dpg, index1) => (
-                                    <TableCell width="5%" align="center" key={index1}>
-                                        <TextField value={dpg} disabled={fila.edit===false} onChange={e=>handleChangeWeights(index,index1,e)}/>
+                                    <TableCell width="5% align=center" key={index1}>
+                                        <TextField select value={dpg} disabled={fila.edit===false} onChange={e=>handleChangeWeights(index,index1,e)}>
+                                            {weights.map((option) => (
+                                                <MenuItem key={option.value} value={option.value}>
+                                                {option.label}
+                                                </MenuItem> ))}
+                                        </TextField>                                        
                                     </TableCell>
                                 ))}
                                 <TableCell width="15%" align="center">

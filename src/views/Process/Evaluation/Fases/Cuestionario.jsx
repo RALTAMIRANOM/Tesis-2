@@ -259,7 +259,7 @@ const Cuestionario = (props) => {
 
     useEffect(() => {
         async function setListaPreguntas(){
-            const auxCategorias = (await APIEvaluation.consultQuestionary());
+            const auxCategorias = (await APIEvaluation.consultQuestionary(props.eval));
             setCategorias(auxCategorias);
         }
     

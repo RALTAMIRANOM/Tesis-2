@@ -178,8 +178,8 @@ const PrincipalEvaluacion = (props) => {
         setFase(2);
     }
 
-    const guardarPuntuacion = (nuevaPuntuacion) => {
-        setPuntuacion(nuevaPuntuacion);
+    const guardarPuntuacion = (listaPuntaje) => {
+        setPuntuacion(listaPuntaje)
         setFase(3);
     }
 

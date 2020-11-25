@@ -42,7 +42,7 @@ export async function consultResult(){
     return responseData;
 }
 
-/* Registro */
+/* Registro de objetivos*/
 export async function registerObjectives(objectivesList){
     let responseData = {};
     let body = {
@@ -101,6 +101,23 @@ export async function consultWeightModify(evaluation){
     await API.post("/consultWeightModify", body)
         .then(res => {
             responseData=res.data.weightModify;
+        })
+        .catch(err => console.log(err));
+    console.log(responseData);
+    return responseData;
+}
+
+/* Registro de puntuación*/
+export async function registerModifiedWeights(modifiedWeights){
+    let responseData = {};
+    let body = {
+        weightModify: modifiedWeights,
+
+    };
+    console.log("modified weights api",body)
+    await API.post("/modifyWeight", body)
+        .then(res => {
+            responseData=res.data.result;
         })
         .catch(err => console.log(err));
     console.log(responseData);
