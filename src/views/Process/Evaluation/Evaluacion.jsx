@@ -1,4 +1,4 @@
-import React from "react";
+import React,{ useEffect } from "react";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
@@ -6,6 +6,7 @@ import Medidor from "../../../assets/medidor.svg";
 import CustomButton from "../../../components/Button";
 import "./Evaluacion.css";
 import PrincipalEvaluacion from "./PrincipalEvaluacion";
+import * as APIEvaluation from '../../../dataAccess/evaluation';
 
 const useStyles = makeStyles((theme) => ({
     txtContainer: {
@@ -30,10 +31,12 @@ const Evaluacion  = (props) => {
   const actionClasses = props.classes;
   const [active, setActive] = React.useState(true);
   const [paso, setPaso] = React.useState(0);
+  const [objetivos, setObjetivos] = React.useState([]);
 
   const handleChange = () => {
     setActive(false);
   };
+
 
   return active ? (
     <Grid container direction="column">   
@@ -83,7 +86,7 @@ const Evaluacion  = (props) => {
     </Grid>
   ):
   (
-    <PrincipalEvaluacion eval={props.eval} entity={props.entity}/>
+    <PrincipalEvaluacion eval={props.eval} entity={props.entity}  status={props.status} />
   )
 };
 

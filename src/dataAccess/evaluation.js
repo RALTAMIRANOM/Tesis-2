@@ -14,10 +14,10 @@ export async function getCriterion() {
     return responseData;
 }
 
-export async function consultQuestionary(){
+export async function consultQuestionary(evaluation){
     let responseData = {};
     let body = {
-        idEvaluation: 1
+        idEvaluation: evaluation
     };
     await API.post("/consultQuestionary", body)
         .then(res => {
@@ -49,6 +49,7 @@ export async function registerObjectives(objectivesList){
         objectives: objectivesList,
 
     };
+    console.log("register api",body)
     await API.post("/registerObjectives", body)
         .then(res => {
             responseData=res.data.result;
@@ -81,10 +82,25 @@ export async function consultObjectives(evaluation){
     let body = {
         idEvaluation: evaluation
     };
-    console.log("entro api")
+    console.log("entro api consult objectives", evaluation)
     await API.post("/consultObjectives", body)
         .then(res => {
-            responseData=res.data.result;
+            responseData=res.data.result.objectives;
+        })
+        .catch(err => console.log(err));
+    console.log(responseData);
+    return responseData;
+}
+
+/* Consulta de puntuación */
+export async function consultWeightModify(evaluation){
+    let responseData = {};
+    let body = {
+        idEvaluation: evaluation
+    };
+    await API.post("/consultWeightModify", body)
+        .then(res => {
+            responseData=res.data.weightModify;
         })
         .catch(err => console.log(err));
     console.log(responseData);

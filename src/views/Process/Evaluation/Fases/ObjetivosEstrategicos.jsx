@@ -22,6 +22,9 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import Edit from '@material-ui/icons/Edit';
+import Delete from '@material-ui/icons/Delete';
 
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
@@ -151,11 +154,12 @@ const ObjetivosEstrategicos = (props) => {
     const classes = useStyles();
 	const actionClasses = props.classes;
     const [value, setValue] = React.useState(0);
-    const [descripcion, setDescripcion] = React.useState("");
-    const [desafio, setDesafio] = React.useState(null);
-    //const [desafios, setDesafios] = React.useState(listaDesafios);
+    const [description, setDescription] = React.useState("");
+    const [idCriterion, setIdCriterion] = React.useState(0);
+    //const [code, setCode] = React.useState("");
     const [desafios, setDesafios] = React.useState([]);
     const [objetivosAEnviar, setObjetivosAEnviar] = React.useState([]);
+    const [objetivos, setObjetivos] = React.useState([]);
     const [colors, setColors] = React.useState([
         {back: "#FF0000", text: "#FFFFFF"},
         {back: "#0000FF", text: "#FFFFFF"},
@@ -169,44 +173,97 @@ const ObjetivosEstrategicos = (props) => {
     const [valorDialogo, setValorDialogo] = React.useState(false);
     const [textoDialogo, setTextoDialogo] = React.useState(0);
 
-    useEffect(() => {
-        async function setListaDesafios(){
-            const auxDesafios = await APIEvaluation.getCriterion();
-            props.objetivos.forEach((objetivo) => {
-                auxDesafios.splice(auxDesafios.findIndex((obj => obj.code === objetivo.desafio)), 1);
-            });
-            setDesafios(auxDesafios);
-        }
+    const setListaObjetivos = async () => {
+        const auxObjetivos = await APIEvaluation.consultObjectives(props.eval);
+        console.log(auxObjetivos)
+        setObjetivosAEnviar(auxObjetivos);
+        return auxObjetivos;
+    }
 
-        setObjetivosAEnviar(props.objetivos);
-        setListaDesafios();
-    }, [props.objetivos]);
+    const setListaDesafios = async (listaObj) => {
+        const auxDesafios = await APIEvaluation.getCriterion();
+        console.log("objetivos estrategicos", listaObj)
+        listaObj.forEach((objetivo) => {
+            auxDesafios.splice(auxDesafios.findIndex((obj => obj.idCriterion === objetivo.idCriterion)), 1);
+        });
+        setDesafios(auxDesafios);
+    }
+
+    const init = async () => {
+        let arrObj = await setListaObjetivos();
+        await setListaDesafios(arrObj);
+    }
+
+    useEffect(() => {
+        // async function setListaObjetivos(){
+        //     console.log("evaluacionnnnnn", props.eval)
+            
+        // }
+        init();
+        // setListaObjetivos();
+    // },[objetivosAEnviar])
+    },[])
+            
+    // useEffect(() => {
+    //     async function setListaDesafios(){
+    //         const auxDesafios = await APIEvaluation.getCriterion();
+    //         console.log("objetivos estrategicos", props.objetivos)
+    //         props.objetivos.forEach((objetivo) => {
+    //             auxDesafios.splice(auxDesafios.findIndex((obj => obj.idCriterion === objetivo.idCriterion)), 1);
+    //         });
+    //         setDesafios(auxDesafios);
+    //     }
+    //     /* console.log("props objetivos", props.objetivos)
+    //     setObjetivosAEnviar(props.objetivos);
+    //     console.log("objetivos a enviar", objetivosAEnviar) */
+    //     setListaDesafios();
+    // }, [objetivosAEnviar]);
 
     const handleChangeDialogo = (texto) => {
         setValorDialogo(!valorDialogo);
         setTextoDialogo(texto);
     };
 
-	const handleDesafio = (event) => {
-        setDesafio(event.target.value);
-	}
+	const handleIdCriterion = (event) => {
+        setIdCriterion(event.target.value);
+
+    }
+    
+    const handleDelete = async (idCrit) => {
+        let arrNew = null;
+        if(props.status == 2){ //en proceso
+            arrNew = objetivosAEnviar.map(item=>{
+                if(item.idCriterion===idCrit) item.description = "Sin Objetivo";
+                return item;
+            })
+            // setObjetivosAEnviar(listAux);  
+        }else arrNew = objetivosAEnviar.filter(item=>item.idCriterion!==idCrit);
+        setObjetivosAEnviar(arrNew);
+        await setListaDesafios(arrNew);
+    }
+    
+/*     const handleEdit = async (idCrit) => {
+
+    } */
     
     const anadirObjetivo = () => {
-        console.log(desafio, descripcion);
-        console.log(desafio != null && descripcion != "");
-        if(desafio != null && descripcion != ""){
+        console.log(idCriterion, description);
+        console.log(idCriterion != null && description != "");
+        if(idCriterion != null && description != ""){
             let nuevObjetivo = {
-                desafio: desafio,
-                descripcion: descripcion
+                description: description,
+                idCriterion: idCriterion
             };
             let auxObjetivos = objetivosAEnviar;
             auxObjetivos.push(nuevObjetivo);
             setObjetivosAEnviar(auxObjetivos);
+            console.log("objetivos a enviar", objetivosAEnviar)
             // Elminar el objetivo ya seleccionado
-            setDesafio(null);
-            setDescripcion("");
+            setIdCriterion(0);
+            setDescription("");
+            /* setCode(""); */
             let auxDesafios = desafios;
-            auxDesafios.splice(auxDesafios.findIndex((obj => obj.code === nuevObjetivo.desafio)), 1);
+            auxDesafios.splice(auxDesafios.findIndex((obj => obj.idCriterion === nuevObjetivo.idCriterion)), 1);
             setDesafios(auxDesafios);
         }else{
             handleChangeDialogo(1);
@@ -215,8 +272,10 @@ const ObjetivosEstrategicos = (props) => {
 
     const enviarObjetivos = () => {
         console.log(objetivosAEnviar, objetivosAEnviar.length);
-        if(objetivosAEnviar.length > 0)
+        if(objetivosAEnviar.length > 0){
+            console.log("enviar objetivos",objetivosAEnviar)
             props.submit(objetivosAEnviar);
+        }
         else
             handleChangeDialogo(2);
     };
@@ -233,7 +292,7 @@ const ObjetivosEstrategicos = (props) => {
 					<TextField
 						id="standard-helperText"
 						label="Objetivo estratégico"
-                        onChange={(e) => setDescripcion(e.target.value)}
+                        onChange={(e) => setDescription(e.target.value)}
 					/>
 				</Grid>
 				<Grid item xs={12} style={{marginLeft: '-7px'}}>
@@ -244,12 +303,12 @@ const ObjetivosEstrategicos = (props) => {
 						<Select
 							labelId="demo-simple-select-helper-label"
 							id="demo-simple-select-helper"
-							value={desafio}
-							onChange={handleDesafio}
+							value={idCriterion}
+							onChange={handleIdCriterion}
 						>
                             {desafios.map((desafio) => {
                                 return(
-                                    <MenuItem value={desafio.code}>
+                                    <MenuItem value={desafio.idCriterion}>
                                         {desafio.code}: {desafio.name}
                                     </MenuItem>
                                 );
@@ -268,14 +327,44 @@ const ObjetivosEstrategicos = (props) => {
                 <Grid item xs={12}>
                     <List component="nav" aria-label="main mailbox folders">
                         {objetivosAEnviar.map((objetivo, key) => {
-                            return <ListItem
-                                        button
-                                        >
-                                    <ListItemText primary={objetivo.descripcion + " - " + objetivo.desafio}/>
-                                </ListItem>
+                            return objetivo.description!=="Sin Objetivo"?<ListItem key={key}>
+                                    <ListItemText primary={
+                                    <Grid container direction='row'>
+                                        <Grid container item xs={9}><Typography> {objetivo.description + " - " + "DPG"+objetivo.idCriterion}</Typography></Grid>
+                                        <Grid container item xs={3} justify="flex-end">
+{/*                                             <ListItemIcon onClick={()=>handleEdit(objetivo.idCriterion)} style={{color:'#287198' }}>
+                                                <Edit />
+                                            </ListItemIcon> */}
+                                            <ListItemIcon  onClick={()=>handleDelete(objetivo.idCriterion)} style={{color:'red' }}>
+                                                <Delete />
+                                            </ListItemIcon>
+                                        </Grid>
+                                    </Grid>}/>
+                                </ListItem>:null
                         })}
                     </List>
                 </Grid>
+                {objetivosAEnviar.filter(item=>item.description==="Sin Objetivo").length>0?<Grid item xs={12} style={{marginTop: "1.5rem"}}>
+                    <Typography>*Los objetivos se eliminarán cuando se seleccione el botón Guardar</Typography>
+                    <List component="nav" aria-label="main mailbox folders">
+                        {objetivosAEnviar.map((objetivo, key) => {
+                            return objetivo.description==="Sin Objetivo"?<ListItem key={key}>
+                                    <ListItemText primary={
+                                    <Grid container direction='row'>
+                                        <Grid container item xs={9}><Typography> {"DPG"+objetivo.idCriterion}</Typography></Grid>
+                                        {/* <Grid container item xs={3} justify="flex-end">
+                                            <ListItemIcon style={{color:'#287198' }}>
+                                                <Edit />
+                                            </ListItemIcon>
+                                            <ListItemIcon  onClick={()=>handleDelete(objetivo.idCriterion)} style={{color:'red' }}>
+                                                <Delete />
+                                            </ListItemIcon>
+                                        </Grid> */}
+                                    </Grid>}/>
+                                </ListItem>:null
+                        })}
+                    </List>
+                </Grid>:null}
                 <Grid item xs={12} style={{textAlign: "center"}}>
                     <MuiThemeProvider theme={greenTheme}>
                         <Button variant="outlined" color="primary" onClick={() => enviarObjetivos()}>

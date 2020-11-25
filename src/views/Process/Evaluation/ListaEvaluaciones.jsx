@@ -122,22 +122,8 @@ const useStyles = makeStyles((theme) => ({
 
 const ListaEvaluaciones = (props) => {
     let evals = {
-        nuevas: [
-            {id: 1, nameEntity: "Municipalidad de Miraflores",
-            addressEntity: "Av. José Larco 400, Miraflores 15074",
-            idPlan: 1,
-            idUser: 1}
-        ],
-        proceso: [
-            {id: 3, nameEntity: "Municipalidad de Barranco",
-            addressEntity: "Av. San Martín 102, Barranco 15063",
-            idPlan: 1,
-            idUser: 1},
-            {id: 5, nameEntity: "Municipalidad Provincial de Tangamandapio",
-            addressEntity: "Av. Jaimito 888, Tangamandapio 14728",
-            idPlan: 1,
-            idUser: 1}
-        ],
+        nuevas: [],
+        proceso: [],
         terminadas: []
     };
 
@@ -145,9 +131,9 @@ const ListaEvaluaciones = (props) => {
 	const actionClasses = props.classes;
     const [evaluaciones, setEvaluaciones] = React.useState(evals);
 
-    const handleEvaluacionSeleccionada = (idEval, nameEntity) => {
+    const handleEvaluacionSeleccionada = (idEval, nameEntity, status) => {
         //props.submit(idEval);
-        props.submit(idEval, nameEntity);
+        props.submit(idEval, nameEntity, status);
     };
 
     useEffect(() => {
@@ -184,7 +170,7 @@ const ListaEvaluaciones = (props) => {
                                 {evaluaciones.nuevas.map((evaluacion) => {
                                     return <ListItem
                                                 button
-                                                onClick={(event) => handleEvaluacionSeleccionada(evaluacion.id, evaluacion.nameEntity)}>
+                                                onClick={(event) => handleEvaluacionSeleccionada(evaluacion.id, evaluacion.nameEntity, 1)}>
                                         <ListItemText primary={evaluacion.nameEntity}/>
                                         <ListItemText primary={evaluacion.addressEntity}/>
                                     </ListItem>
@@ -212,7 +198,7 @@ const ListaEvaluaciones = (props) => {
                                 {evaluaciones.proceso.map((evaluacion) => {
                                     return <ListItem
                                                 button
-                                                onClick={(event) => handleEvaluacionSeleccionada(evaluacion.id, evaluacion.nameEntity)}>
+                                                onClick={(event) => handleEvaluacionSeleccionada(evaluacion.id, evaluacion.nameEntity, 2)}>
                                         <ListItemText primary={evaluacion.nameEntity}/>
                                         <ListItemText primary={evaluacion.addressEntity}/>
                                     </ListItem>
@@ -240,7 +226,7 @@ const ListaEvaluaciones = (props) => {
                                 {evaluaciones.terminadas.map((evaluacion) => {
                                     return <ListItem
                                                 button
-                                                onClick={(event) => handleEvaluacionSeleccionada(evaluacion.id, evaluacion.nameEntity)}>
+                                                onClick={(event) => handleEvaluacionSeleccionada(evaluacion.id, evaluacion.nameEntity, 3)}>
                                         <ListItemText primary={evaluacion.nameEntity}/>
                                         <ListItemText primary={evaluacion.addressEntity}/>
                                     </ListItem>

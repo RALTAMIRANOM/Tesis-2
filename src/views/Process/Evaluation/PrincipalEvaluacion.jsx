@@ -1,4 +1,4 @@
-import React from "react";
+import React,{ useEffect }  from "react";
 import Grid from "@material-ui/core/Grid";
 import { makeStyles } from "@material-ui/core";
 import Typography from '@material-ui/core/Typography';
@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
         backgroundColor: theme.palette.background.paper,
         display: 'flex',
-        height: 500,
+        height: 700,
     },
     tabs: {
         borderRight: `1px solid ${theme.palette.divider}`,
@@ -115,7 +115,7 @@ const PrincipalEvaluacion = (props) => {
 	const actionClasses = props.classes;
     const [fase, setFase] = React.useState(1);
     const [idEvaluacion, setIdEvaluacion] = React.useState(0);
-    const [objetivos, setObjetivos] = React.useState([]);
+    const [objetivos, setObjetivos] = React.useState(null);
     const [puntuacion, setPuntuacion] = React.useState([]);
     const [cuestionario, setCuestionario] = React.useState([]);
     const [valorDialogo, setValorDialogo] = React.useState(false);
@@ -151,18 +151,26 @@ const PrincipalEvaluacion = (props) => {
         
     };
 
+    useEffect(() => {
+        async function setListaObjetivos(){
+            console.log("evaluacionnnnnn", props.eval)
+            const auxObjetivos = await APIEvaluation.consultObjectives(props.eval);
+            console.log(auxObjetivos)
+            setObjetivos(auxObjetivos);
+        }
+        setListaObjetivos();
+      }, []);
 
 	const guardarObjetivo = (nuevObjetivos) => {
-        /* Registrar evaluaciones */
+        /* Registrar objetivos */
         async function registrarObjetivos(){
-            /* Formatear cada evaluación */
             let auxObjectives = [];
             nuevObjetivos.forEach((objetivo) => {
-                auxObjectives.push({idCriterion: objetivo.idCriterion, idEvaluacion: idEvaluacion, description: objetivo.description});
+                auxObjectives.push({idCriterion: objetivo.idCriterion, idEvaluation: props.eval, description: objetivo.description});
             });
-
+            console.log(auxObjectives)
             const resultRegister = await APIEvaluation.registerObjectives(auxObjectives);
-            console.log(resultRegister)
+            console.log("guardar objetivos", resultRegister)
         }
         
         setObjetivos(nuevObjetivos);
@@ -180,7 +188,7 @@ const PrincipalEvaluacion = (props) => {
         props.submit(objetivos, puntuacion, auxCuestionario);
     }
     
-	return (
+	return objetivos && (
 		<div className={classes.root}>
 			<Grid container spacing={3}>
 				<Grid item xs={2}>
@@ -255,10 +263,10 @@ const PrincipalEvaluacion = (props) => {
                     <Typography  style={{marginTop: '10px'}} variant="h3" className={classes.txtContainerTitleLeft} fontWeight="fontWeightBold">
                         Entidad: {props.entity} 
 					</Typography>
-					{fase == 1 && <ObjetivosEstrategicos eval={props.eval} objetivos={objetivos} submit={guardarObjetivo}/>}
-                    {fase == 2 && <Puntuacion eval={idEvaluacion} submit={guardarPuntuacion}/>}
-                    {fase == 3 && <Cuestionario eval={idEvaluacion} submit={terminarObjetivo}/>}
-                    {fase == 4 && <Resultado eval={idEvaluacion} />}
+					{fase == 1 && <ObjetivosEstrategicos eval={props.eval} objetivos={objetivos} submit={guardarObjetivo} status={props.status}/>}
+                    {fase == 2 && <Puntuacion eval={props.eval} submit={guardarPuntuacion}/>}
+                    {fase == 3 && <Cuestionario eval={props.eval} submit={terminarObjetivo}/>}
+                    {fase == 4 && <Resultado eval={props.eval} />}
 				</Grid>
 			</Grid>
 		</div>

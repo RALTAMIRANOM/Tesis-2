@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import Logo from "../../assets/logoB.svg";
@@ -16,6 +16,8 @@ import Resultado from "./Result/Resultado";
 import Paper from '@material-ui/core/Paper';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
+import * as APIEvaluation from '../../dataAccess/evaluation';
+//import ImplementationImage from '../../../public/enConstruccion.png';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -25,6 +27,18 @@ const useStyles = makeStyles((theme) => ({
       color: "#FFFFFF",
       indicatorColor: "#FFFFFF"},        
   },
+  txtContainerTitleCenter: {
+      color: "#287198",
+      textAlign:"center",
+      fontSize: 25,
+      marginTop: "10vh",
+      marginBottom: "5vh"
+  },
+  imageBuilding: {
+    display:"block",
+    margin:"auto",
+    marginBottom: "5vh"
+  },  
   selected: {}
 }));
 
@@ -34,6 +48,9 @@ const Proceso = (props) => {
   const [value, setValue] = React.useState(0);
   const [evaluacion, setEvaluacion] = React.useState(0);
   const [nameEntity, setNameEntity] = React.useState("");
+  const [status, setStatus] = React.useState(0);
+  //const [objetivos, setObjetivos] = React.useState([]);
+
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -49,10 +66,19 @@ const Proceso = (props) => {
     setValue(2);
   };
 
-  const seleccionarEvaluacion = (idEvalProps, nameEntityProps) => {
+  const seleccionarEvaluacion = (idEvalProps, nameEntityProps, statusProps) => {
+    console.log(idEvalProps, nameEntityProps, statusProps)
     setEvaluacion(idEvalProps);
     setNameEntity(nameEntityProps);
-    setValue(3);
+    setStatus(statusProps);
+    console.log(evaluacion, nameEntity, status)
+    if(statusProps == 2){ //proceso te dirige a PrincipalEvaluation
+      setValue(5);
+    }else if(statusProps == 1){ //nueva te dirige a Evaluacion
+      setValue(3);
+    }else{ //culminada te dirige a resultado
+      setValue(4);
+    }
   }
 
   return (
@@ -72,12 +98,18 @@ const Proceso = (props) => {
                     >
                         <Tab value={0} label="Inicio" classes={actionClasses}/>
                         <Tab value={1} label="Evaluaciones" classes={actionClasses}  />
-                        <Tab value={2} label="Resultados" classes={actionClasses} />
+                        <Tab value={2} label="Reportes" classes={actionClasses} />
                     </Tabs>
                     {value===0 && <Inicio/>}
                     {value===1 && <ListaEvaluaciones submit={seleccionarEvaluacion} />}
-                    {value===2 && <Resultado evaluacion={evaluacion}/>}
-                    {value===3 && <Evaluacion eval={evaluacion} entity={nameEntity}/>}
+                    {value===2 && <div><Typography  style={{marginTop: '10px'}} variant="h3" className={classes.txtContainerTitleCenter} fontWeight="fontWeightBold">
+                                      En desarrollo
+					                        </Typography>
+                                  <img src="./enConstruccion.png" className={classes.imageBuilding}/>
+                                  </div> }
+                    {value===3 && <Evaluacion eval={evaluacion} entity={nameEntity} status={status}/>}
+                    {value===4 && <Resultado eval={evaluacion} entity={nameEntity}/>}
+                    {value===5 && <PrincipalEvaluation eval={evaluacion} entity={nameEntity} status={status}/>}
         </Paper>
         <Footer />
       </Grid>
