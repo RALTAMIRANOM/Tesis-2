@@ -131,9 +131,9 @@ const ListaEvaluaciones = (props) => {
 	const actionClasses = props.classes;
     const [evaluaciones, setEvaluaciones] = React.useState(evals);
 
-    const handleEvaluacionSeleccionada = (idEval, nameEntity, status) => {
+    const handleEvaluacionSeleccionada = (idEval, nameEntity, status, phase) => {
         //props.submit(idEval);
-        props.submit(idEval, nameEntity, status);
+        props.submit(idEval, nameEntity, status, phase);
     };
 
     useEffect(() => {
@@ -193,12 +193,12 @@ const ListaEvaluaciones = (props) => {
                     </AccordionSummary>
                     <AccordionDetails>
                         <Grid item xs={12}>
-                            {evaluaciones.nuevas.length > 0 ?
+                            {evaluaciones.proceso.length > 0 ?
                             <List component="nav" aria-label="main mailbox folders">
                                 {evaluaciones.proceso.map((evaluacion) => {
                                     return <ListItem
                                                 button
-                                                onClick={(event) => handleEvaluacionSeleccionada(evaluacion.id, evaluacion.nameEntity, 2)}>
+                                                onClick={(event) => handleEvaluacionSeleccionada(evaluacion.id, evaluacion.nameEntity, 2, evaluacion.phase)}>
                                         <ListItemText primary={evaluacion.nameEntity}/>
                                         <ListItemText primary={evaluacion.addressEntity}/>
                                     </ListItem>

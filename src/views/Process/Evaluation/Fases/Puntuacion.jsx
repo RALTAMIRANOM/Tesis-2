@@ -23,7 +23,7 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
         backgroundColor: theme.palette.background.paper,
         display: 'flex',
-        height: 700,
+        height: 500,
     },
     tabs: {
         borderRight: `1px solid ${theme.palette.divider}`,
@@ -160,7 +160,7 @@ const Puntuacion = (props) => {
                 <Typography  style={{marginTop: '10px', marginBottom: '10px'}} variant="h4" className={classes.txtContainerNoteLeft} fontWeight="fontWeightBold">
                     Nota: Los pesos deben estar en el rango de 0 a 4
 				</Typography>
-                <Table className={classes.table} aria-label="simple table" style={{height:"20vh", maxHeight:"20vh", overflowY:"scroll"}}>
+                <Table className={classes.table} aria-label="simple table" >
                     <TableHead>
                     	<TableRow>
                             <TableCell width="10%" align="center">Componente clave (CC)</TableCell>
@@ -171,7 +171,7 @@ const Puntuacion = (props) => {
                             <TableCell width="15%" align="center">Acciones</TableCell>
                         </TableRow>
                     </TableHead>
-                    <TableBody >
+                    <TableBody style={{height:"20vh", maxHeight:"20vh", overflowY:"scroll"}}>
                         {listaPuntaje.map((fila, index) => (
                             <TableRow key={index}>
                                 <TableCell width="10%" align="center">{fila.keyComponent}</TableCell>

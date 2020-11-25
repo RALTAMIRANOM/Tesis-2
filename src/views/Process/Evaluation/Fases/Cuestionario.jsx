@@ -83,8 +83,8 @@ const useStyles = makeStyles((theme) => ({
     root: {
         flexGrow: 1,
         backgroundColor: theme.palette.background.paper,
-        display: 'relative',
-        minHeight: 700,
+        display: 'flex',
+        height: 200,
     },
     tabs: {
         borderRight: `1px solid ${theme.palette.divider}`,
@@ -269,9 +269,9 @@ const Cuestionario = (props) => {
     const handleSubcategClick = (event, indexCateg, indexSubcateg) => {
         let newSubcategSelected = [...subcategSelected];
         if(indexSubcateg == subcategSelected[indexCateg])
-            newSubcategSelected[indexCateg] = -1;
+            newSubcategSelected[indexCateg] = -1; //oculta las preguntas el cuestionario
         else
-            newSubcategSelected[indexCateg] = indexSubcateg;
+            newSubcategSelected[indexCateg] = indexSubcateg; //muestra las preguntas del cuestionario
         setSubcategSelected(newSubcategSelected);
         let auxPreguntas = [...categorias[indexCateg]['subcategorias'][indexSubcateg].preguntas]
         setTablaPreguntas(auxPreguntas);
@@ -334,7 +334,12 @@ const Cuestionario = (props) => {
                                 </Typography>
                             </AccordionSummary>
                             <AccordionDetails>
-                                <Grid item xs={6}>
+                                <Grid item  xs={5}>
+                                    <Grid item xs={12}>
+                                        <Typography className={classes.txtLittleTitleCenter}>
+                                            Lista de cuestionarios
+                                        </Typography>
+                                    </Grid>
                                     <List component="nav" aria-label="main mailbox folders">
                                         {desafio.subcategorias.map((subcateg, key) => {
                                             return <ListItem
@@ -349,15 +354,11 @@ const Cuestionario = (props) => {
                                         })}
                                     </List>
                                 </Grid>
-                                <Grid item xs={6}>
-                                    <Grid item xs={12}>
-                                        <Typography className={classes.txtLittleTitleCenter}>
-                                            Lista de preguntas
-                                        </Typography>
-                                    </Grid>
+                                <Grid item xs={7}>
+                                    
                                     {subcategSelected[indexCateg] == -1 && 
                                         <div style={{marginTop: '10px'}}>
-                                            Haga clic en alguna subcategoría del lado izquierdo para habilitar la lista de preguntas.
+                                            Haga clic en algún cuestionario del lado izquierdo para habilitar la lista de preguntas.
                                         </div>
                                     }
                                     {subcategSelected[indexCateg] > -1 && 
@@ -402,7 +403,9 @@ const Cuestionario = (props) => {
                                         <Button variant="outlined" color="primary" onClick={() => cancelarSeleccion(indexCateg)}>
                                             Regresar
                                         </Button>
-                                        <Button variant="outlined" color="primary" style={{marginLeft: '10px'}}
+                                        <Button variant="outlined" color="primary" style={{marginLeft: '10px'}} 
+                                        /* disabled={categorias[indexCateg]['subcategorias'][subcategSelected[indexCateg]].preguntas.length == categorias[indexCateg]['subcategorias'][subcategSelected[indexCateg]].preguntas.filter(y => y.respuesta != -1).length ? 
+                                                    'true' : 'false'} */
                                                 onClick={() => actualizarSeleccion(indexCateg)}>
                                             Guardar
                                         </Button>

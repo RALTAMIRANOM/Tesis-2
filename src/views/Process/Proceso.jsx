@@ -49,6 +49,7 @@ const Proceso = (props) => {
   const [evaluacion, setEvaluacion] = React.useState(0);
   const [nameEntity, setNameEntity] = React.useState("");
   const [status, setStatus] = React.useState(0);
+  const [phase, setPhase] = React.useState(null)
   //const [objetivos, setObjetivos] = React.useState([]);
 
 
@@ -66,14 +67,15 @@ const Proceso = (props) => {
     setValue(2);
   };
 
-  const seleccionarEvaluacion = (idEvalProps, nameEntityProps, statusProps) => {
-    console.log(idEvalProps, nameEntityProps, statusProps)
+  const seleccionarEvaluacion = (idEvalProps, nameEntityProps, statusProps, phaseProps) => {
+    console.log(idEvalProps, nameEntityProps, statusProps, phaseProps)
     setEvaluacion(idEvalProps);
     setNameEntity(nameEntityProps);
     setStatus(statusProps);
-    console.log(evaluacion, nameEntity, status)
+    setPhase(phaseProps);
+    console.log(evaluacion, nameEntity, status, phase)
     if(statusProps == 2){ //proceso te dirige a PrincipalEvaluation
-      setValue(5);
+        setValue(5);      
     }else if(statusProps == 1){ //nueva te dirige a Evaluacion
       setValue(3);
     }else{ //culminada te dirige a resultado
@@ -107,12 +109,12 @@ const Proceso = (props) => {
 					                        </Typography>
                                   <img src="./enConstruccion.png" className={classes.imageBuilding}/>
                                   </div> }
-                    {value===3 && <Evaluacion eval={evaluacion} entity={nameEntity} status={status}/>}
+                    {value===3 && <Evaluacion eval={evaluacion} entity={nameEntity} status={status} phase={phase}/>}
                     {value===4 && <Resultado eval={evaluacion} entity={nameEntity}/>}
-                    {value===5 && <PrincipalEvaluation eval={evaluacion} entity={nameEntity} status={status}/>}
+                    {value===5 && <PrincipalEvaluation eval={evaluacion} entity={nameEntity} status={status} phase={phase}/>}
         </Paper>
-        <Footer />
-      </Grid>
+{/*         <Footer />
+ */}      </Grid>
   );
 };
 

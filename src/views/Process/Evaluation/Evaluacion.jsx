@@ -86,7 +86,7 @@ const Evaluacion  = (props) => {
     </Grid>
   ):
   (
-    <PrincipalEvaluacion eval={props.eval} entity={props.entity}  status={props.status} />
+    <PrincipalEvaluacion eval={props.eval} entity={props.entity}  status={props.status} phase={1}/>
   )
 };
 

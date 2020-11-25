@@ -74,7 +74,7 @@ const useStyles = makeStyles((theme) => ({
         flexGrow: 1,
         backgroundColor: theme.palette.background.paper,
         display: 'flex',
-        height: 700,
+        height: 500,
     },
     tabs: {
         borderRight: `1px solid ${theme.palette.divider}`,
@@ -136,13 +136,13 @@ const PrincipalEvaluacion = (props) => {
                     handleChangeDialogo();
                 break;
             case 3:
-                if(objetivos.length != 0 && puntuacion.length != 0)
+                if((objetivos.length != 0 && puntuacion.length != 0) || props.phase == 3)
                    setFase(3);
                 else
                     handleChangeDialogo();
                 break;
             default:
-                if(objetivos.length != 0 && puntuacion.length != 0 && cuestionario.length != 0)
+                if((objetivos.length != 0 && puntuacion.length != 0 && cuestionario.length != 0) || props.phase == 4)
                    setFase(4);
                 else
                     handleChangeDialogo();
@@ -152,6 +152,7 @@ const PrincipalEvaluacion = (props) => {
     };
 
     useEffect(() => {
+        setFase(props.phase)
         async function setListaObjetivos(){
             console.log("evaluacionnnnnn", props.eval)
             const auxObjetivos = await APIEvaluation.consultObjectives(props.eval);
@@ -207,22 +208,22 @@ const PrincipalEvaluacion = (props) => {
                         button
                         selected={fase === 2}
                         onClick={(event) => handleListItemClick(event, 2)}>
-                        <ListItemIcon style={{color: (objetivos.length > 0 && puntuacion.length > 0 ? 
+                        <ListItemIcon style={{color: ( props.phase==3 || props.phase==4 || objetivos.length > 0 && puntuacion.length > 0 ? 
                                 'limegreen' : 'black')}}>
                             <TableChartIcon />
                         </ListItemIcon>
-                        <ListItemText style={{color: (objetivos.length > 0 && puntuacion.length > 0 ? 
+                        <ListItemText style={{color: ( props.phase==3 || props.phase==4 || objetivos.length > 0 && puntuacion.length > 0 ? 
                             'limegreen' : 'black')}} primary="Puntuación" />
                     </ListItem>
                     <ListItem
                         button
                         selected={fase === 3}
                         onClick={(event) => handleListItemClick(event, 3)}>
-                        <ListItemIcon style={{color: (objetivos.length > 0 && puntuacion.length > 0 && cuestionario.length != 0 ? 
+                        <ListItemIcon style={{color: (props.phase==4 || objetivos.length > 0 && puntuacion.length > 0 && cuestionario.length != 0 ? 
                                 'limegreen' : 'black')}}>
                             <AssignmentIcon />
                         </ListItemIcon>
-                        <ListItemText style={{color: (objetivos.length > 0 && puntuacion.length > 0 && cuestionario.length != 0 ? 
+                        <ListItemText style={{color: (props.phase==4 || objetivos.length > 0 && puntuacion.length > 0 && cuestionario.length != 0 ? 
                             'limegreen' : 'black')}} primary="Cuestionarios" />
                     </ListItem>
                     <ListItem
@@ -249,7 +250,7 @@ const PrincipalEvaluacion = (props) => {
                     <DialogContentText id="alert-dialog-slide-description">
                         No puede avanzar a la siguiente fase sin completar
                         {(objetivos.length == 0 ? " los objetivos estratégicos." : 
-                            puntuacion.length == 0 ? " la tabla de puntuaciones." :
+                            puntuacion.length == 0 && props.phase!=3  && props.phase!=4 ? " la tabla de puntuaciones." :
                             " el cuestionario.")}
                     </DialogContentText>
                     </DialogContent>

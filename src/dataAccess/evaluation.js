@@ -123,3 +123,20 @@ export async function registerModifiedWeights(modifiedWeights){
     console.log(responseData);
     return responseData;
 }
+
+/* Registro de cuestionario*/
+export async function registerQuestionary(questionary){
+    let responseData = {};
+    let body = {
+        questionary: questionary,
+
+    };
+    console.log("questionary register api",body)
+    await API.post("/saveAnswer", body)
+        .then(res => {
+            responseData=res.data.result;
+        })
+        .catch(err => console.log(err));
+    console.log(responseData);
+    return responseData;
+}
