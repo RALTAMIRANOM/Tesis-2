@@ -23,12 +23,10 @@ import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Slide from "@material-ui/core/Slide";
 
-import ListaEvaluaciones from "./ListaEvaluaciones.jsx";
 import ObjetivosEstrategicos from "./Fases/ObjetivosEstrategicos.jsx";
 import Puntuacion from "./Fases/Puntuacion.jsx";
 import Cuestionario from "./Fases/Cuestionario.jsx";
 import Resultado from "../Result/Resultado";
-import { FreeBreakfastOutlined } from "@material-ui/icons";
 
 import * as APIEvaluation from "../../../dataAccess/evaluation";
 
@@ -62,12 +60,12 @@ TabPanel.propTypes = {
   value: PropTypes.any.isRequired,
 };
 
-function a11yProps(index) {
+/* function a11yProps(index) {
   return {
     id: `vertical-tab-${index}`,
     "aria-controls": `vertical-tabpanel-${index}`,
   };
-}
+} */
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -104,11 +102,11 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const flexContainer = {
+/* const flexContainer = {
   display: "flex",
   flexDirection: "row",
   padding: 0,
-};
+}; */
 
 const PrincipalEvaluacion = (props) => {
   const classes = useStyles();
@@ -126,8 +124,10 @@ const PrincipalEvaluacion = (props) => {
   };
 
   const handleListItemClick = (event, index) => {
+    // eslint-disable-next-line default-case
     switch (index) {
       case 1:
+        // eslint-disable-next-line eqeqeq
         if (fase != 4) setFase(1);
         break;
       case 2:
